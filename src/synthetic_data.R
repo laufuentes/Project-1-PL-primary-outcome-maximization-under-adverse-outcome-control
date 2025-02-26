@@ -1,4 +1,4 @@
-setwd("~/Documents/PhD/Project 1 - Policy learning - Constraints - Multiple outcome/simulations_new_approach_AC")
+setwd("~/Documents/PhD/Project 1 - Policy learning - Constraints - Multiple outcome/Project1_PL_risk_benefit")
 set.seed(2025)
 
 #Required libraries
@@ -56,6 +56,16 @@ data_gen <- function(n, option){
     Y_1 <- as.integer(pmax(Y_0 + beta*(1 - as.matrix(X)%*%theta_Y1) + rnorm(n, mean=0, sd=1),0))
     Y.0 <- (Y_0-min(Y_0,Y_1))/(max(Y_0,Y_1)-min(Y_0,Y_1))
     Y.1 <- (Y_1-min(Y_0,Y_1))/(max(Y_0,Y_1)-min(Y_0,Y_1))
+    
+    p0 <- ifelse(
+      X[,3] < 20 & X[,1] < 150,
+      0.5, # Generate random values for true condition
+      0.055) # Generate random values for false condition
+    
+    p1 <- ifelse(
+      X[,3] < 25 & X[,1] < 155,
+      p0+ 0.35,
+      p0+ 0.25)
     
     if(option[2]=="1"){
       logit_prob_Z.0 <- beta.0 + as.matrix(X)%*%theta_Z 

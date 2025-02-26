@@ -1,4 +1,4 @@
-setwd("~/Documents/PhD/Project 1 - Policy learning - Constraints - Multiple outcome/simulations_new_approach_AC")
+setwd("~/Documents/PhD/Project 1 - Policy learning - Constraints - Multiple outcome/Project1_PL_risk_benefit")
 
 set.seed(2025)
 library(gridExtra)
@@ -202,7 +202,8 @@ gamma_lambda_plot <- function(results,option, df){
   lambda_results <- results %>% 
     select(-optimal_x) %>% 
     group_by(lambda) %>%
-    filter(obj == max(obj)) %>%
+    filter(constraint<0) %>% 
+    slice_max(policy_value, n = 1, with_ties = FALSE) %>%
     ungroup() %>% 
     as.data.frame()
   
@@ -215,7 +216,8 @@ gamma_lambda_plot <- function(results,option, df){
   
   beta_res <- results %>%
     group_by(beta) %>%
-    filter(obj == max(obj)) %>%
+    filter(constraint<0) %>% 
+    slice_max(policy_value, n = 1, with_ties = FALSE) %>%
     ungroup()
     
   beta_results <- beta_res %>% 
@@ -229,8 +231,7 @@ gamma_lambda_plot <- function(results,option, df){
   
   ggsave(paste0("images/oracular/beta_plot_",option[1],"_",option[2],".pdf"),beta_plot)
   
-  
-  beta_discr <- as.integer(seq(1, dim(beta_results)[1], length.out=10))
+  beta_discr <- as.integer(seq(1, dim(beta_res)[1], length.out=10))
   plots <- lapply(beta_discr, function(x) gamma_plot_funct(beta_res$optimal_x[[x]], beta_res$lambda[[x]], beta_res$beta[[x]],option, df))
   plots_no_legend <- lapply(plots, function(p) p + theme(legend.position = "none"))
   
