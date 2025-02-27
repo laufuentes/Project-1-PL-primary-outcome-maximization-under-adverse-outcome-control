@@ -2,3 +2,4 @@ images/*
 opt_results/*
 *.RData
 *.RDataTmp*
+opt_results/*
